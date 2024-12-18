@@ -36,7 +36,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/leave", "/{id}/approve", "/{id}/reject", "/api/email/send-leave-status").permitAll()
 
                         // Admin endpoints (restricted to ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/admin/users","/admin/user/*", "/admin/attendance/all", "/admin/absentees", "/admin/leaveRequests/**", "/leave/user/{userId}","/admin/users/count","/error").permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/admin/users","/admin/user/", "/admin/attendance/all","/admin/attendance/date", "/admin/absentees", "/admin/leaveRequests/", "/leave/user/{userId}","/admin/users/count","/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/admin/users","/admin/user/*", "/admin/attendance/all", "/admin/attendance/date" , "/admin/absentees", "/admin/leaveRequests/**", "/leave/user/{userId}","/admin/users/count","/error").permitAll()
                         //.requestMatchers(HttpMethod.PUT, "/admin/leave/approve/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/admin/user/{id}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/admin/user/{id}").permitAll()
@@ -62,7 +63,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("https://final-qr-code.vercel.app/")); 
-       // config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        //config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true); // Allow credentials (cookies, etc.)

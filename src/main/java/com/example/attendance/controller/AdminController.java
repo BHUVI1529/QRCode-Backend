@@ -2,6 +2,7 @@
 
 package com.example.attendance.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -147,4 +149,13 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/attendance/date")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<AttendanceData>> getAttendanceByDate(
+        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        System.out.println("Received Date: " + date);  // Log the incoming date
+        List<AttendanceData> records = attendanceService.findAttendanceByDate(date);
+        return ResponseEntity.ok(records);
+    }
+    
 }

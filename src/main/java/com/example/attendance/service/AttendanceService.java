@@ -136,5 +136,9 @@ public class AttendanceService {
         return absenteesCount;
     }
 
+    public List<AttendanceData> findAttendanceByDate(LocalDate date) {
+        return attendanceRepository.findAttendanceRecordsByDate(date);
+    }
+    
 }
 

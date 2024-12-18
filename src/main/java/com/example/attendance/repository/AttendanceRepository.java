@@ -49,5 +49,8 @@ public interface AttendanceRepository extends JpaRepository<AttendanceData, Long
               @Query("SELECT DISTINCT a.user.id FROM AttendanceData a WHERE FUNCTION('DATE', a.loginTime) = :attendanceDate")
               List<Long> findPresentUserIdsByDate(@Param("attendanceDate") LocalDate attendanceDate);
 
+              @Query("SELECT a FROM AttendanceData a WHERE FUNCTION('DATE', a.loginTime) = :attendanceDate")
+    List<AttendanceData> findAttendanceRecordsByDate(@Param("attendanceDate") LocalDate attendanceDate);
+    
 }
     
