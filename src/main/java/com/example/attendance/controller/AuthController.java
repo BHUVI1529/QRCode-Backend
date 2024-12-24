@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 
 
-// @CrossOrigin(origins = "https://final-qr-code.vercel.app/")
-@CrossOrigin(origins = "http://localhost:3000")
+ @CrossOrigin(origins = "https://final-qr-code.vercel.app/")
+// @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class AuthController {
