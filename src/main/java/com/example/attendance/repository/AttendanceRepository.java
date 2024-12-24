@@ -3,7 +3,7 @@ package com.example.attendance.repository;
 import com.example.attendance.model.AttendanceData;
 import com.example.attendance.model.User;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,7 +17,10 @@ public interface AttendanceRepository extends JpaRepository<AttendanceData, Long
     // List<AttendanceData> findByUserId(Long userId);
 
     // DP UPDATE BELOW CODE 
+    @Query("SELECT a FROM AttendanceData a WHERE a.user.id = :userId AND DATE(a.loginTime) = :date")
+    List<AttendanceData> findByUserAndDate(@Param("userId") Long userId, @Param("date") LocalDate date);
     
+
       // Use SQL DATE function to filter records by date
    @Query("SELECT a FROM AttendanceData a WHERE DATE(a.loginTime) = CURRENT_DATE")
    List<AttendanceData> findAttendanceForCurrentDate();

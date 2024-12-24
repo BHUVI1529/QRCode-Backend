@@ -6,11 +6,15 @@ import com.example.attendance.repository.AttendanceRepository;
 import com.example.attendance.repository.UserRepository;
 
 import java.sql.Date;
+import java.time.Instant;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,48 @@ public class AttendanceService {
     public void saveAttendance(AttendanceData attendanceData, Long instituteId) {
          attendanceData.setInstituteId(instituteId);
         attendanceRepository.save(attendanceData);
+    }
+
+    public String calculateDuration(Long userId, LocalDate date) {
+        System.out.println("Received date in calculateDuration: " + date);
+
+        // Convert java.sql.Date to java.time.LocalDate
+        // LocalDate localDate = date.toLocalDate();
+
+        // Fetch attendance records for the user on the specified date
+        List<AttendanceData> attendanceRecords = attendanceRepository.findByUserAndDate(userId, date);
+
+        if (attendanceRecords.isEmpty()) {
+            return "No records found for the user on the specified date.";
+        }
+
+        // Initialize total duration
+        Duration totalDuration = Duration.ZERO;
+
+        // Calculate duration from login-logout pairs
+        Instant lastLoginTime = null;
+        for (AttendanceData record : attendanceRecords) {
+            if ("login".equalsIgnoreCase(record.getLoginOption())) {
+                // Convert java.sql.Date to Instant
+                lastLoginTime = record.getLoginTime().toInstant();
+            } else if ("logout".equalsIgnoreCase(record.getLoginOption()) && lastLoginTime != null) {
+                  // Convert login and logout times to LocalDateTime
+                LocalDateTime loginTime = LocalDateTime.ofInstant(lastLoginTime, ZoneId.systemDefault());
+                LocalDateTime logoutTime = LocalDateTime.ofInstant(record.getLoginTime().toInstant(), ZoneId.systemDefault());
+                //Calculate total duration
+                totalDuration = totalDuration.plus(Duration.between(loginTime, logoutTime));
+
+                // Reset lastLoginTime after calculating
+                lastLoginTime = null;
+            }
+        }
+
+        // Convert total duration to hours, minutes, and seconds
+        long hours = totalDuration.toHours();
+        long minutes = totalDuration.toMinutes() % 60;
+        long seconds = totalDuration.getSeconds() % 60;
+
+        return String.format("%02d hours, %02d minutes, %02d seconds", hours, minutes, seconds);
     }
 
     public List<AttendanceData> getAttendanceForCurrentDate(){

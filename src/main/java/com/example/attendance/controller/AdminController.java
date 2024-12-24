@@ -3,6 +3,9 @@
 package com.example.attendance.controller;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.sql.Date;
+//import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -37,6 +40,17 @@ public class AdminController {
         this.attendanceService = attendanceService;
         this.leaveService = leaveService;
         
+    }
+
+    @GetMapping("/attendance/duration")
+    public ResponseEntity<String> getUserDuration( @RequestParam Long userId, @RequestParam String date){
+       // Convert String to LocalDate
+       LocalDate localDate = LocalDate.parse(date);
+
+      
+        // Call the method
+        String duration = attendanceService.calculateDuration(userId, localDate);
+        return ResponseEntity.ok(duration);
     }
 
     @GetMapping("/attendance/today")
