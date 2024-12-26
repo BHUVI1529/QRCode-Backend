@@ -14,8 +14,8 @@ import org.springframework.data.repository.query.Param;
 public interface AttendanceRepository extends JpaRepository<AttendanceData, Long> {
 
     // boolean existsByUserAndLoginOptionAndLoginTimeAfter(User user, String loginOption, Date startOfDay);
-    // List<AttendanceData> findByUserId(Long userId);
-
+    
+    
     // DP UPDATE BELOW CODE 
     @Query("SELECT a FROM AttendanceData a WHERE a.user.id = :userId AND DATE(a.loginTime) = :date")
     List<AttendanceData> findByUserAndDate(@Param("userId") Long userId, @Param("date") LocalDate date);

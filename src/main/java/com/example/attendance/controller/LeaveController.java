@@ -53,5 +53,10 @@ public class LeaveController {
 
     // @Autowired
     // private EmailService emailService; // Service for sending emails
+    @GetMapping("/on-leave-count")
+    public ResponseEntity<Long> getOnLeaveCount() {
+        long count = leaveService.countApprovedLeaves();
+        return ResponseEntity.ok(count);
+    }
 
 }

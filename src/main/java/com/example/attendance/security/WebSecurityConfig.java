@@ -38,6 +38,8 @@ public class WebSecurityConfig {
                         // Admin endpoints (restricted to ROLE_ADMIN)
                         //.requestMatchers(HttpMethod.GET, "/admin/users","/admin/user/", "/admin/attendance/all","/admin/attendance/date", "/admin/absentees", "/admin/leaveRequests/", "/leave/user/{userId}","/admin/users/count","/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin/users","/admin/user/*", "/admin/attendance/all", "/admin/attendance/date" ,"/admin/attendance/today" ,"/admin/attendance/duration" , "/admin/absentees", "/admin/leaveRequests/**", "/leave/user/{userId}","/admin/users/count","/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/admin/attendance/user/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/leave/on-leave-count").permitAll() // No authentication required
                         //.requestMatchers(HttpMethod.PUT, "/admin/leave/approve/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/admin/user/{id}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/admin/user/{id}").permitAll()

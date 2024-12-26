@@ -106,7 +106,10 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AttendanceData>> getUserAttendanceRecords(@PathVariable Long id) {
         List<AttendanceData> records = attendanceService.findAttendanceRecordsByUserId(id);
-        return ResponseEntity.ok(records);
+        if (records.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(records); 
     }
 
     // Fetch absentees for a specific date

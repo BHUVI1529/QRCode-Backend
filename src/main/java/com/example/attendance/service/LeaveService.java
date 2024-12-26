@@ -51,4 +51,8 @@ public class LeaveService {
         leaveRepository.save(leave); // Save the updated status
     }
 
+    public long countApprovedLeaves() {
+        return leaveRepository.findByStatus("Accepted").size();
+    }
+
 }
