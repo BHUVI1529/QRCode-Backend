@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.sql.Date;
 //import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
@@ -180,4 +181,12 @@ public class AdminController {
         return ResponseEntity.ok(records);
     }
     
+    @GetMapping("/course-distribution")
+    @PreAuthorize("hasRole('ADMIN')") // Only accessible by admins
+    public ResponseEntity<Map<String, Long>> getCourseDistribution() {
+        // Delegate the business logic to the service layer
+        Map<String, Long> courseDistribution = userService.getCourseDistribution();
+        return ResponseEntity.ok(courseDistribution);
+    }
+
 }

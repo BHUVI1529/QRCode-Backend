@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -91,6 +93,18 @@ public User getUserById(Long userId) {
     return userRepository.findById(userId).orElse(null); // Return null if user not found
 }
 
+public Map<String, Long> getCourseDistribution() {
+    // Fetch all users from the repository
+    List<User> users = userRepository.findAll();
+
+    // Group by course and count the number of users in each course, excluding "Unknown" courses
+    return users.stream()
+        .filter(user -> user.getCourse() != null && !user.getCourse().equals("Unknown")) // Exclude "Unknown" courses
+        .collect(Collectors.groupingBy(
+            user -> user.getCourse(), // Group by course name
+            Collectors.counting()
+            ));
+}
 }
 
 
