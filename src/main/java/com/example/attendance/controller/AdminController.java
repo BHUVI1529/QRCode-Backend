@@ -24,6 +24,7 @@ import com.example.attendance.model.Leave;
 import com.example.attendance.model.Role;
 import com.example.attendance.model.User;
 import com.example.attendance.service.AttendanceService;
+import com.example.attendance.service.EmailService;
 import com.example.attendance.service.LeaveService;
 import com.example.attendance.service.UserService;
 
@@ -34,12 +35,14 @@ public class AdminController {
     private final UserService userService;
     private final AttendanceService attendanceService;
     private final LeaveService leaveService;
+    private final EmailService emailService;
 
     
-    public AdminController(UserService userService, AttendanceService attendanceService, LeaveService leaveService) {
+    public AdminController(UserService userService, AttendanceService attendanceService, LeaveService leaveService, EmailService emailService) {
         this.userService = userService;
         this.attendanceService = attendanceService;
         this.leaveService = leaveService;
+        this.emailService = emailService;
         
     }
 
@@ -121,13 +124,7 @@ public class AdminController {
         return ResponseEntity.ok(absentees);
     }
 
-    // Fetch all leave requests
-    // @GetMapping("/leaves")
-    // @PreAuthorize("hasRole('ADMIN')")
-    // public ResponseEntity<List<leaveRequest>> getAllLeaveRequests() {
-    //     List<leaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
-    //     return ResponseEntity.ok(leaveRequests);
-    // }
+   
 
     @GetMapping("/users/count")
     @PreAuthorize("hasRole('ADMIN')")
@@ -139,20 +136,50 @@ public class AdminController {
 
      // Fetch all leave requests
     // Endpoint to fetch all leave requests for the admin
-   
-   
-
     @GetMapping("/leaveRequests")
     public ResponseEntity<List<Leave>> getAllLeaveRequests() {
         List<Leave> leaveRequests = leaveService.getAllLeaveRequests();
         return ResponseEntity.ok(leaveRequests);
     }
 
+//     @GetMapping("leaveRequests/{id}/approve")
+//     public ResponseEntity<String> acceptLeave(@PathVariable Long id) {
+//         try {
+//             leaveService.updateLeaveStatus(id, "Accepted"); // Update leave status
+//             // emailService.sendLeaveStatusEmail(id, "Accepted"); // Send email to the user
+//             return ResponseEntity.ok("Leave request accepted and email sent");
+//         } catch (Exception e) {
+//             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                     .body("Error processing the leave request: " + e.getMessage());
+//         }
+//     }
+
+// @GetMapping("leaveRequests/{id}/reject")
+//     public ResponseEntity<String> rejectLeave(@PathVariable Long id) {
+//         try {
+//             leaveService.updateLeaveStatus(id, "Rejected"); // Update leave status
+//             //emailService.sendLeaveStatusEmail(id, "Rejected"); // Send email to the user
+//             return ResponseEntity.ok("Leave request rejected and email sent");
+//         } catch (Exception e) {
+//             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                     .body("Error processing the leave request: " + e.getMessage());
+//         }
+//     }
+
     @GetMapping("leaveRequests/{id}/approve")
     public ResponseEntity<String> acceptLeave(@PathVariable Long id) {
         try {
-            leaveService.updateLeaveStatus(id, "Accepted"); // Update leave status
-            // emailService.sendLeaveStatusEmail(id, "Accepted"); // Send email to the user
+            // Update leave status to "Accepted"
+            leaveService.updateLeaveStatus(id, "Accepted");
+
+            // Fetch user email from the leave request (assuming your service can provide this)
+            String userEmail = leaveService.getLeaveById(id).getUser().getEmail();
+
+            // Send email notification
+            String subject = "Leave Request Approved";
+            String text = "Dear Candidate,\n\nYour leave request has been approved.\n\nRegards,\nApptekNow Careers";
+            emailService.sendEmail(userEmail, subject, text);
+
             return ResponseEntity.ok("Leave request accepted and email sent");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -160,11 +187,20 @@ public class AdminController {
         }
     }
 
-@GetMapping("leaveRequests/{id}/reject")
+    @GetMapping("leaveRequests/{id}/reject")
     public ResponseEntity<String> rejectLeave(@PathVariable Long id) {
         try {
-            leaveService.updateLeaveStatus(id, "Rejected"); // Update leave status
-            //emailService.sendLeaveStatusEmail(id, "Rejected"); // Send email to the user
+            // Update leave status to "Rejected"
+            leaveService.updateLeaveStatus(id, "Rejected");
+
+            // Fetch user email from the leave request (assuming your service can provide this)
+            String userEmail = leaveService.getLeaveById(id).getUser().getEmail();
+
+            // Send email notification
+            String subject = "Leave Request Rejected";
+            String text = "Dear Candidate,\n\nYour leave request has been rejected.\n\nRegards,\nApptekNow Careers ";
+            emailService.sendEmail(userEmail, subject, text);
+
             return ResponseEntity.ok("Leave request rejected and email sent");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
